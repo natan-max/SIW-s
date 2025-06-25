@@ -1,0 +1,41 @@
+# Unity
+[Ll]ibrary/
+[Tt]emp/
+[Oo]bj/
+[Bb]uild/
+[Bb]uilds/
+[Ll]ogs/
+MemoryCaptures/
+
+# User-specific
+*.csproj
+*.unityproj
+*.sln
+*.suo
+*.tmp
+*.user
+*.userprefs
+*.pidb
+*.booproj
+*.svd
+
+# Mac
+.DS_Store
+
+# Visual Studio
+.vscode/
+.vs/
+
+# Rider
+.idea/
+*.sln.iml
+
+# Auto-generated
+*.apk
+*.aab
+*.unitypackage
+*.log
+*.bak
+
+# Crash Reports
+sysinfo.txt
