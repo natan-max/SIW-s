@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 
 public class Player : MonoBehaviour
 {
@@ -21,7 +22,6 @@ public class Player : MonoBehaviour
     public Transform handSlot;
     public GameObject laptopOffModel;
     public GameObject laptopOnModel;
-    public GameObject panelObject;
 
     [Header("Crouching")]
     public float standingHeight = 2f;
@@ -33,6 +33,7 @@ public class Player : MonoBehaviour
     public Image crosshairImage;
     public Color defaultCrosshairColor = Color.white;
     public Color interactCrosshairColor = Color.red;
+    public GameObject gameOverPanel; // 🎯 Canvas з екраном лоха
 
     private Rigidbody rb;
     private float xRotation = 0f;
@@ -49,29 +50,33 @@ public class Player : MonoBehaviour
             laptopOffModel.SetActive(true);
             laptopOnModel.SetActive(false);
         }
+
+        if (gameOverPanel != null)
+            gameOverPanel.SetActive(false); // ховаємо екран програшу на старті
     }
 
     void Update()
     {
+        // 🎯 показуємо екран лоха по кнопці `
+        if (Input.GetKeyDown(KeyCode.BackQuote))
+        {
+            if (gameOverPanel != null)
+            {
+                gameOverPanel.SetActive(true);
+                Time.timeScale = 0f; // стоп гри
+                Cursor.lockState = CursorLockMode.None;
+                Cursor.visible = true;
+            }
+        }
+
         LookAround();
         HandleCrouch();
         HandleRun();
         UpdateCrosshair();
 
-        if (Input.GetKeyDown(KeyCode.E))
-        {
-            Interact();
-        }
-
-        if (Input.GetKeyDown(KeyCode.Q))
-        {
-            DropItem();
-        }
-
-        if (Input.GetKeyDown(KeyCode.Space) && isGrounded)
-        {
-            Jump();
-        }
+        if (Input.GetKeyDown(KeyCode.E)) Interact();
+        if (Input.GetKeyDown(KeyCode.Q)) DropItem();
+        if (Input.GetKeyDown(KeyCode.Space) && isGrounded) Jump();
     }
 
     void FixedUpdate()
