@@ -2,33 +2,68 @@ using UnityEngine;
 
 public class Generator : MonoBehaviour
 {
+    [Header("Налаштування заряду")]
     public float charge = 100f;
     public float drainRate = 5f;
-    public Light generatorLight;
+
+    [Header("Світло генератора (8 шт.)")]
+    public Light[] generatorLights; // масив світильників
+
+    [Header("Аудіо")]
     public AudioSource audioSource;
-    public AudioClip beep25, beep15, beep10;
+    public AudioClip beepHigh;   // перший сигнал
+    public AudioClip beepMid;    // другий сигнал
+    public AudioClip beepLow;    // третій сигнал
+
+    [Header("Пороги сповіщення")]
+    public float thresholdHigh = 25f; 
+    public float thresholdMid = 15f;
+    public float thresholdLow = 10f;
 
     private bool[] triggered = new bool[3];
 
     void Update()
     {
+        // Розрядка генератора
         charge -= drainRate * Time.deltaTime;
         charge = Mathf.Max(0f, charge);
 
-        if (generatorLight != null)
+        // Керування всіма світильниками
+        if (generatorLights != null && generatorLights.Length > 0)
         {
-            if (charge < 10f)
+            foreach (Light lamp in generatorLights)
             {
-                generatorLight.intensity = Mathf.PingPong(Time.time * 5f, 1f);
-            }
-            else
-            {
-                generatorLight.intensity = 1f;
+                if (lamp != null)
+                {
+                    if (charge < thresholdLow)
+                    {
+                        lamp.intensity = Mathf.PingPong(Time.time * 5f, 1f);
+                    }
+                    else
+                    {
+                        lamp.intensity = 1f;
+                    }
+                }
             }
         }
 
-        if (charge < 25f && !triggered[0]) { audioSource.PlayOneShot(beep25); triggered[0] = true; }
-        if (charge < 15f && !triggered[1]) { audioSource.PlayOneShot(beep15); triggered[1] = true; }
-        if (charge < 10f && !triggered[2]) { audioSource.PlayOneShot(beep10); triggered[2] = true; }
+        // Звукові сигнали
+        if (charge < thresholdHigh && !triggered[0]) 
+        { 
+            if (beepHigh != null) audioSource.PlayOneShot(beepHigh); 
+            triggered[0] = true; 
+        }
+
+        if (charge < thresholdMid && !triggered[1]) 
+        { 
+            if (beepMid != null) audioSource.PlayOneShot(beepMid); 
+            triggered[1] = true; 
+        }
+
+        if (charge < thresholdLow && !triggered[2]) 
+        { 
+            if (beepLow != null) audioSource.PlayOneShot(beepLow); 
+            triggered[2] = true; 
+        }
     }
 }
