@@ -1,11 +1,12 @@
 using UnityEngine;
+using TMPro;
+using System.Collections;
 
 public class Player : MonoBehaviour
 {
     [Header("Рух")]
     public float walkSpeed = 5f;
     public float runSpeed = 9f;
-    public float jumpForce = 5f;
     private float currentSpeed;
 
     [Header("Миша / Камера")]
@@ -16,15 +17,28 @@ public class Player : MonoBehaviour
     public float interactRange = 3f;
     public LayerMask interactableLayer;
 
-    [HideInInspector] public bool canMove = true; // 🔹 прапорець для блокування руху
+    [Header("UI LOX")]
+    public GameObject LOXCanvas;        // Канвас програшу
+    public TMP_Text LOXText;            // Текст TMP для LOX
+    public GameObject buttonsPanel;     // Панель з кнопками
+    public float textSpeed = 0.1f;      // Швидкість друку тексту
+
+    [HideInInspector] public bool canMove = true;
 
     private Rigidbody rb;
     private float xRotation = 0f;
+    private bool isLOXActive = false;
 
     void Start()
     {
         rb = GetComponent<Rigidbody>();
         Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+
+        if (LOXCanvas != null)
+            LOXCanvas.SetActive(false);
+        if (buttonsPanel != null)
+            buttonsPanel.SetActive(false);
     }
 
     void Update()
@@ -33,8 +47,12 @@ public class Player : MonoBehaviour
         HandleRun();
 
         if (Input.GetKeyDown(KeyCode.E))
-        {
             Interact();
+
+        // 🔹 Q/Й для відкриття LOX
+        if (Input.GetKeyDown(KeyCode.Q) && !isLOXActive)
+        {
+            ShowLOX();
         }
     }
 
@@ -45,7 +63,7 @@ public class Player : MonoBehaviour
 
     void Move()
     {
-        if (!canMove) return; // 🔹 блокуємо рух при відкритому UI
+        if (!canMove) return;
 
         float x = Input.GetAxis("Horizontal");
         float z = Input.GetAxis("Vertical");
@@ -59,14 +77,13 @@ public class Player : MonoBehaviour
 
     void LookAround()
     {
-        // 🔹 огляд завжди працює, навіть якщо рух заблокований
         float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity * Time.deltaTime;
         float mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity * Time.deltaTime;
 
         xRotation -= mouseY;
         xRotation = Mathf.Clamp(xRotation, -90f, 90f);
-
         playerCamera.localRotation = Quaternion.Euler(xRotation, 0f, 0f);
+
         transform.Rotate(Vector3.up * mouseX);
     }
 
@@ -78,10 +95,7 @@ public class Player : MonoBehaviour
             return;
         }
 
-        if (Input.GetKey(KeyCode.LeftShift))
-            currentSpeed = runSpeed;
-        else
-            currentSpeed = walkSpeed;
+        currentSpeed = Input.GetKey(KeyCode.LeftShift) ? runSpeed : walkSpeed;
     }
 
     void Interact()
@@ -91,13 +105,57 @@ public class Player : MonoBehaviour
 
         if (Physics.Raycast(ray, out RaycastHit hit, interactRange, interactableLayer))
         {
-            Debug.Log("Взаємодія з: " + hit.collider.name);
-
             IInteractable interactable = hit.collider.GetComponent<IInteractable>();
             if (interactable != null)
-            {
                 interactable.Interact();
-            }
         }
+    }
+
+    // 🔹 Показати LOX
+    void ShowLOX()
+    {
+        if (LOXCanvas == null || LOXText == null || buttonsPanel == null) return;
+
+        isLOXActive = true;
+        canMove = false;
+        LOXCanvas.SetActive(true);
+        buttonsPanel.SetActive(false);
+
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+
+        StartCoroutine(TypeLOXText("ТИ ПРОГРАВ!"));
+    }
+
+    IEnumerator TypeLOXText(string text)
+    {
+        LOXText.text = "";
+        foreach (char c in text)
+        {
+            LOXText.text += c;
+            yield return new WaitForSecondsRealtime(textSpeed);
+        }
+
+        buttonsPanel.SetActive(true);
+    }
+
+    // 🔹 Кнопка Play Again
+    public void PlayAgain()
+    {
+        isLOXActive = false;
+        canMove = true;
+
+        if (LOXCanvas != null) LOXCanvas.SetActive(false);
+        if (buttonsPanel != null) buttonsPanel.SetActive(false);
+        if (LOXText != null) LOXText.text = "";
+
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+    }
+
+    // 🔹 Кнопка Exit
+    public void ExitGame()
+    {
+        Application.Quit();
     }
 }
