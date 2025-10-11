@@ -13,27 +13,30 @@ public class Player : MonoBehaviour
     public float mouseSensitivity = 100f;
     public Transform playerCamera;
 
-    [Header("Взаємодія")]
-    public float interactRange = 3f;
-    public LayerMask interactableLayer;
-
     [Header("UI LOX")]
     public GameObject LOXCanvas;        // Канвас програшу
-    public TMP_Text LOXText;            // Текст TMP для LOX
+    public TMP_Text LOXText;            // TMP-текст
     public GameObject buttonsPanel;     // Панель з кнопками
-    public float textSpeed = 0.1f;      // Швидкість друку тексту
+    public AudioSource loseSound;       // Звук програшу
+    public float textSpeed = 0.1f;      // Швидкість появи тексту
 
     [HideInInspector] public bool canMove = true;
 
     private Rigidbody rb;
     private float xRotation = 0f;
     private bool isLOXActive = false;
+    private Vector3 startPosition; // Початкова позиція гравця
+    private Quaternion startRotation; // Початковий поворот гравця
 
     void Start()
     {
         rb = GetComponent<Rigidbody>();
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
+
+        // Зберігаємо початкову позицію та поворот
+        startPosition = transform.position;
+        startRotation = transform.rotation;
+
+        LockCursor(true);
 
         if (LOXCanvas != null)
             LOXCanvas.SetActive(false);
@@ -43,47 +46,48 @@ public class Player : MonoBehaviour
 
     void Update()
     {
-        LookAround();
-        HandleRun();
-
-        if (Input.GetKeyDown(KeyCode.E))
-            Interact();
-
-        // 🔹 Q/Й для відкриття LOX
-        if (Input.GetKeyDown(KeyCode.Q) && !isLOXActive)
+        if (canMove)
         {
-            ShowLOX();
+            LookAround();
+            HandleRun();
         }
+
+        // Програш (Q)
+        if (Input.GetKeyDown(KeyCode.Q) && !isLOXActive)
+            ShowLOX();
     }
 
     void FixedUpdate()
     {
-        Move();
+        if (canMove)
+            Move();
     }
 
     void Move()
     {
-        if (!canMove) return;
-
         float x = Input.GetAxis("Horizontal");
         float z = Input.GetAxis("Vertical");
 
         Vector3 move = transform.right * x + transform.forward * z;
         Vector3 velocity = move * currentSpeed;
         velocity.y = rb.velocity.y;
-
         rb.velocity = velocity;
     }
 
     void LookAround()
     {
+        if (!canMove || playerCamera == null) return;
+
+        // 🔹 Mouse input
         float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity * Time.deltaTime;
         float mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity * Time.deltaTime;
 
+        // 🔹 Вертикальний рух (камера)
         xRotation -= mouseY;
         xRotation = Mathf.Clamp(xRotation, -90f, 90f);
         playerCamera.localRotation = Quaternion.Euler(xRotation, 0f, 0f);
 
+        // 🔹 Горизонтальний рух (тіло)
         transform.Rotate(Vector3.up * mouseX);
     }
 
@@ -98,31 +102,24 @@ public class Player : MonoBehaviour
         currentSpeed = Input.GetKey(KeyCode.LeftShift) ? runSpeed : walkSpeed;
     }
 
-    void Interact()
-    {
-        Vector3 screenCenter = new Vector3(Screen.width / 2f, Screen.height / 2f, 0f);
-        Ray ray = Camera.main.ScreenPointToRay(screenCenter);
-
-        if (Physics.Raycast(ray, out RaycastHit hit, interactRange, interactableLayer))
-        {
-            IInteractable interactable = hit.collider.GetComponent<IInteractable>();
-            if (interactable != null)
-                interactable.Interact();
-        }
-    }
-
-    // 🔹 Показати LOX
+    // ==========================
+    // 🔹 ПРОГРАШ
+    // ==========================
     void ShowLOX()
     {
         if (LOXCanvas == null || LOXText == null || buttonsPanel == null) return;
 
         isLOXActive = true;
         canMove = false;
+        rb.velocity = Vector3.zero;
+
         LOXCanvas.SetActive(true);
         buttonsPanel.SetActive(false);
 
-        Cursor.lockState = CursorLockMode.None;
-        Cursor.visible = true;
+        LockCursor(false);
+
+        if (loseSound != null)
+            loseSound.Play();
 
         StartCoroutine(TypeLOXText("ТИ ПРОГРАВ!"));
     }
@@ -139,23 +136,44 @@ public class Player : MonoBehaviour
         buttonsPanel.SetActive(true);
     }
 
-    // 🔹 Кнопка Play Again
+    // ==========================
+    // 🔹 КНОПКИ
+    // ==========================
     public void PlayAgain()
     {
-        isLOXActive = false;
-        canMove = true;
+        StopAllCoroutines();
 
-        if (LOXCanvas != null) LOXCanvas.SetActive(false);
-        if (buttonsPanel != null) buttonsPanel.SetActive(false);
-        if (LOXText != null) LOXText.text = "";
+        LOXCanvas.SetActive(false);
+        buttonsPanel.SetActive(false);
+        LOXText.text = "";
 
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
+        // 🔹 Відновлюємо позицію, кут, управління
+        transform.position = startPosition;
+        transform.rotation = startRotation;
+        rb.velocity = Vector3.zero;
+        playerCamera.localRotation = Quaternion.identity;
+        xRotation = 0f;
+
+        StartCoroutine(ReenableControl());
     }
 
-    // 🔹 Кнопка Exit
+    IEnumerator ReenableControl()
+    {
+        yield return null; // чекаємо 1 кадр
+        isLOXActive = false;
+        canMove = true;
+        LockCursor(true);
+    }
+
     public void ExitGame()
     {
         Application.Quit();
+    }
+
+    // 🔹 Курсор (вкл/викл)
+    void LockCursor(bool locked)
+    {
+        Cursor.lockState = locked ? CursorLockMode.Locked : CursorLockMode.None;
+        Cursor.visible = !locked;
     }
 }
