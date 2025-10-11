@@ -257,7 +257,10 @@ GameObject:
   - component: {fileID: 4148243934598596431}
   - component: {fileID: 3873559618986983031}
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
   - component: {fileID: 4613306871175076029}
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
   m_Layer: 0
@@ -333,6 +336,7 @@ MeshRenderer:
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
 <<<<<<< Updated upstream
+<<<<<<< Updated upstream
 --- !u!65 &4613306871175076029
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -354,6 +358,8 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 0.014999857, y: 0.23992698, z: 0.001000036}
   m_Center: {x: 0.0008954902, y: 0.05758644, z: -0.000477788}
+=======
+>>>>>>> Stashed changes
 =======
 >>>>>>> Stashed changes
 --- !u!1 &7778862988685746837

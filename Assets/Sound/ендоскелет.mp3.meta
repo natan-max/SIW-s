@@ -1,5 +1,9 @@
 fileFormatVersion: 2
+<<<<<<<< Updated upstream:Assets/Sound/ендоскелет.mp3.meta
 guid: fac391c3505f4e74e9fbf021d9d44806
+========
+guid: 19ad6596f5dc78742888fb4472fdff11
+>>>>>>>> Stashed changes:Assets/Sound/вітання.mp3.meta
 AudioImporter:
   externalObjects: {}
   serializedVersion: 7

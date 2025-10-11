@@ -1,5 +1,9 @@
 fileFormatVersion: 2
+<<<<<<<< Updated upstream:Assets/nappin/Office Props Softpack.meta
 guid: 840384f76e0ba6143986b2d0c6c50094
+========
+guid: 8c72b8044387b1b4eb57e4c8520f5ec7
+>>>>>>>> Stashed changes:Assets/nappin.meta
 folderAsset: yes
 DefaultImporter:
   externalObjects: {}

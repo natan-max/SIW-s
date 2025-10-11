@@ -8,20 +8,40 @@ public class Door : MonoBehaviour, IInteractable
 
     public void Interact()
     {
+<<<<<<< Updated upstream
         if (requiresPower)
         {
             Generator generator = FindObjectOfType<Generator>();
             if (generator != null && !generator.HasPower)  // <-- видалено ()
+=======
+        // Перевірка чи потрібна енергія
+        if (requiresPower)
+        {
+            Generator generator = FindObjectOfType<Generator>();
+            if (generator != null && !generator.HasPower())
+>>>>>>> Stashed changes
             {
                 Debug.Log("Немає енергії! Двері не відчиняються!");
                 return;
             }
         }
 
+<<<<<<< Updated upstream
         if (!isOpen)
             OpenDoor();
         else
             CloseDoor();
+=======
+        // Відкриття/закриття дверей
+        if (!isOpen)
+        {
+            OpenDoor();
+        }
+        else
+        {
+            CloseDoor();
+        }
+>>>>>>> Stashed changes
     }
 
     public void OpenDoor()

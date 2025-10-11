@@ -3,7 +3,17 @@
 --- !u!78 &1
 TagManager:
   serializedVersion: 2
-  tags: []
+  tags:
+  - laptop
+  - doors
+  - vent
+  - windows
+  - item
+  - Ventilation
+  - Window
+  - Laptop
+  - Item
+  - Door
   layers:
   - Default
   - TransparentFX

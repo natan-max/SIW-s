@@ -1,5 +1,9 @@
 fileFormatVersion: 2
+<<<<<<<< Updated upstream:Assets/nappin.meta
 guid: 8c72b8044387b1b4eb57e4c8520f5ec7
+========
+guid: e8dc26f9c5b05964baebfc3448c41de3
+>>>>>>>> Stashed changes:Assets/Speakers PBR.meta
 folderAsset: yes
 DefaultImporter:
   externalObjects: {}

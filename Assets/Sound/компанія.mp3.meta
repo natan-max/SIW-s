@@ -1,5 +1,9 @@
 fileFormatVersion: 2
+<<<<<<<< Updated upstream:Assets/Sound/компанія.mp3.meta
 guid: 3b46c34caa04d4040ae8e6c809a90d65
+========
+guid: fac391c3505f4e74e9fbf021d9d44806
+>>>>>>>> Stashed changes:Assets/Sound/ендоскелет.mp3.meta
 AudioImporter:
   externalObjects: {}
   serializedVersion: 7

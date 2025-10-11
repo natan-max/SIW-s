@@ -11,7 +11,11 @@ public class Ventilation : MonoBehaviour, IInteractable
         if (requiresPower)
         {
             Generator generator = FindObjectOfType<Generator>();
+<<<<<<< Updated upstream
             if (generator != null && !generator.HasPower)  // <-- видалено ()
+=======
+            if (generator != null && !generator.HasPower())
+>>>>>>> Stashed changes
             {
                 Debug.Log("Немає енергії! Вентиляція не працює!");
                 return;
@@ -19,9 +23,19 @@ public class Ventilation : MonoBehaviour, IInteractable
         }
 
         if (!isOpen)
+<<<<<<< Updated upstream
             OpenVent();
         else
             CloseVent();
+=======
+        {
+            OpenVent();
+        }
+        else
+        {
+            CloseVent();
+        }
+>>>>>>> Stashed changes
     }
 
     public void OpenVent()

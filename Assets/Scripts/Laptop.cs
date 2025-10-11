@@ -2,6 +2,7 @@ using UnityEngine;
 
 public class Laptop : MonoBehaviour, IInteractable
 {
+<<<<<<< Updated upstream
 
     [Header("Laptop Models")]
     public GameObject laptopOff; // модель викл
@@ -11,18 +12,24 @@ public class Laptop : MonoBehaviour, IInteractable
     public GameObject laptopUI;  // Canvas з UI
     public Player playerScript;  // твій Player.cs
 
+=======
+>>>>>>> Stashed changes
     [Header("Моделі ноутбука")]
     public GameObject laptopOffModel;   // Laptop_black_off
     public GameObject laptopOnModel;    // Laptop_black
     public CameraManager cameraManager;
 
+<<<<<<< Updated upstream
 
+=======
+>>>>>>> Stashed changes
     private bool isOn = false;
     private bool isTurningOn = false;
     private bool isUIOpen = false;
 
     public void Interact()
     {
+<<<<<<< Updated upstream
 
         if (!isOn && !isTurningOn)
         {
@@ -80,6 +87,18 @@ public class Laptop : MonoBehaviour, IInteractable
         }
     }
 
+=======
+        if (!isOn)
+        {
+            TurnOn();
+        }
+        else
+        {
+            Debug.Log("Ноут увімкнений – користуйся камерами");
+        }
+    }
+
+>>>>>>> Stashed changes
     void Update()
     {
         if (!isOn) return;
@@ -108,6 +127,9 @@ public class Laptop : MonoBehaviour, IInteractable
         cameraManager.StartCameras();
 
         Debug.Log("Ноутбук увімкнено (Laptop_black)");
+<<<<<<< Updated upstream
 
+=======
+>>>>>>> Stashed changes
     }
 }

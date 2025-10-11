@@ -1,6 +1,9 @@
 {
   "dependencies": {
+<<<<<<< Updated upstream
     "com.unity.cinemachine": "2.10.4",
+=======
+>>>>>>> Stashed changes
     "com.unity.2d.sprite": "1.0.0",
     "com.unity.2d.spriteshape": "9.1.1",
     "com.unity.collab-proxy": "2.8.2",
