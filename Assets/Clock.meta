@@ -1,5 +1,9 @@
 fileFormatVersion: 2
+<<<<<<<< Updated upstream:Assets/Clock.meta
 guid: 5afc7d0a61233e347843fee2abfc76c8
+========
+guid: e8dc26f9c5b05964baebfc3448c41de3
+>>>>>>>> Stashed changes:Assets/Speakers PBR.meta
 folderAsset: yes
 DefaultImporter:
   externalObjects: {}

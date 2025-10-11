@@ -1,5 +1,9 @@
 fileFormatVersion: 2
+<<<<<<<< Updated upstream:Assets/Sound/The_Caretaker_-_Libet_s_Delay_(mp3.pm).mp3.meta
 guid: 91fa96bce8fe61348b7c0bb31fb9509e
+========
+guid: 19ad6596f5dc78742888fb4472fdff11
+>>>>>>>> Stashed changes:Assets/Sound/вітання.mp3.meta
 AudioImporter:
   externalObjects: {}
   serializedVersion: 7

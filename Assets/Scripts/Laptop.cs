@@ -2,6 +2,7 @@ using UnityEngine;
 
 public class Laptop : MonoBehaviour, IInteractable
 {
+
     [Header("Laptop Models")]
     public GameObject laptopOff; // модель викл
     public GameObject laptopOn;  // модель вкл
@@ -10,12 +11,19 @@ public class Laptop : MonoBehaviour, IInteractable
     public GameObject laptopUI;  // Canvas з UI
     public Player playerScript;  // твій Player.cs
 
+    [Header("Моделі ноутбука")]
+    public GameObject laptopOffModel;   // Laptop_black_off
+    public GameObject laptopOnModel;    // Laptop_black
+    public CameraManager cameraManager;
+
+
     private bool isOn = false;
     private bool isTurningOn = false;
     private bool isUIOpen = false;
 
     public void Interact()
     {
+
         if (!isOn && !isTurningOn)
         {
             StartCoroutine(TurnOnLaptop());
@@ -61,5 +69,45 @@ public class Laptop : MonoBehaviour, IInteractable
         }
 
         Debug.Log(isUIOpen ? "Відкрив UI ноутбука" : "Закрив UI ноутбука");
+
+        if (!isOn)
+        {
+            TurnOn();
+        }
+        else
+        {
+            Debug.Log("Ноут увімкнений – користуйся камерами");
+        }
+    }
+
+    void Update()
+    {
+        if (!isOn) return;
+
+        // ЛКМ → переключення на наступну камеру
+        if (Input.GetMouseButtonDown(0))
+        {
+            cameraManager.NextCamera();
+        }
+
+        // Escape → вихід (вимикаємо камери й повертаємось до гравця)
+        if (Input.GetKeyDown(KeyCode.Escape))
+        {
+            cameraManager.ExitCameras();
+        }
+    }
+
+    void TurnOn()
+    {
+        if (laptopOffModel != null) laptopOffModel.SetActive(false);
+        if (laptopOnModel != null) laptopOnModel.SetActive(true);
+
+        isOn = true;
+
+        // одразу запускаємо камери з 1-ї
+        cameraManager.StartCameras();
+
+        Debug.Log("Ноутбук увімкнено (Laptop_black)");
+
     }
 }

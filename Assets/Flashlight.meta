@@ -1,5 +1,9 @@
 fileFormatVersion: 2
+<<<<<<<< Updated upstream:Assets/Flashlight.meta
 guid: 9b690214a873cb94db3f4da531d81900
+========
+guid: 8c72b8044387b1b4eb57e4c8520f5ec7
+>>>>>>>> Stashed changes:Assets/nappin.meta
 folderAsset: yes
 DefaultImporter:
   externalObjects: {}
