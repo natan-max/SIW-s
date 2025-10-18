@@ -1,6 +1,7 @@
 using UnityEngine;
 using TMPro;
 using System.Collections;
+using Cinemachine;
 
 public class Player : MonoBehaviour
 {
@@ -9,32 +10,38 @@ public class Player : MonoBehaviour
     public float runSpeed = 9f;
     private float currentSpeed;
 
-    [Header("Миша / Камера")]
+    [Header("Камера")]
     public float mouseSensitivity = 100f;
-    public Transform playerCamera;
-
+    
+    [Header("Cinemachine")]
+    public CinemachineVirtualCamera playerCamera; // Звичайна Virtual Camera
+    
     [Header("UI LOX")]
-    public GameObject LOXCanvas;        // Канвас програшу
-    public TMP_Text LOXText;            // TMP-текст
-    public GameObject buttonsPanel;     // Панель з кнопками
-    public AudioSource loseSound;       // Звук програшу
-    public float textSpeed = 0.1f;      // Швидкість появи тексту
+    public GameObject LOXCanvas;
+    public TMP_Text LOXText;
+    public GameObject buttonsPanel;
+    public AudioSource loseSound;
+    public float textSpeed = 0.1f;
 
     [HideInInspector] public bool canMove = true;
 
     private Rigidbody rb;
-    private float xRotation = 0f;
     private bool isLOXActive = false;
-    private Vector3 startPosition; // Початкова позиція гравця
-    private Quaternion startRotation; // Початковий поворот гравця
+    private Vector3 startPosition;
+    private Quaternion startRotation;
+    private float xRotation = 0f;
+    private float yRotation = 0f;
 
     void Start()
     {
         rb = GetComponent<Rigidbody>();
 
-        // Зберігаємо початкову позицію та поворот
         startPosition = transform.position;
         startRotation = transform.rotation;
+
+        // Зберігаємо початковий поворот гравця
+        xRotation = transform.eulerAngles.x;
+        yRotation = transform.eulerAngles.y;
 
         LockCursor(true);
 
@@ -76,19 +83,27 @@ public class Player : MonoBehaviour
 
     void LookAround()
     {
-        if (!canMove || playerCamera == null) return;
+        if (!canMove) return;
 
-        // 🔹 Mouse input
+        // Миша
         float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity * Time.deltaTime;
         float mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity * Time.deltaTime;
 
-        // 🔹 Вертикальний рух (камера)
+        // Вертикальний рух (голова)
         xRotation -= mouseY;
         xRotation = Mathf.Clamp(xRotation, -90f, 90f);
-        playerCamera.localRotation = Quaternion.Euler(xRotation, 0f, 0f);
 
-        // 🔹 Горизонтальний рух (тіло)
-        transform.Rotate(Vector3.up * mouseX);
+        // Горизонтальний рух (тіло)
+        yRotation += mouseX;
+
+        // Застосовуємо обертання
+        transform.rotation = Quaternion.Euler(0f, yRotation, 0f);
+        
+        // Обертаємо камеру окремо для вертикального руху
+        if (playerCamera != null)
+        {
+            playerCamera.transform.localRotation = Quaternion.Euler(xRotation, 0f, 0f);
+        }
     }
 
     void HandleRun()
@@ -141,25 +156,36 @@ public class Player : MonoBehaviour
     // ==========================
     public void PlayAgain()
     {
+        ResetGame();
+    }
+
+    void ResetGame()
+    {
         StopAllCoroutines();
 
-        LOXCanvas.SetActive(false);
-        buttonsPanel.SetActive(false);
+        // 🔹 Повністю вимикаємо UI
+        if (LOXCanvas != null)
+            LOXCanvas.SetActive(false);
+        if (buttonsPanel != null)
+            buttonsPanel.SetActive(false);
+        
         LOXText.text = "";
 
-        // 🔹 Відновлюємо позицію, кут, управління
+        // 🔹 Відновлюємо позицію гравця
         transform.position = startPosition;
         transform.rotation = startRotation;
         rb.velocity = Vector3.zero;
-        playerCamera.localRotation = Quaternion.identity;
+        rb.angularVelocity = Vector3.zero;
+
+        // 🔹 Відновлюємо поворот камери
         xRotation = 0f;
+        yRotation = transform.eulerAngles.y;
+        if (playerCamera != null)
+        {
+            playerCamera.transform.localRotation = Quaternion.identity;
+        }
 
-        StartCoroutine(ReenableControl());
-    }
-
-    IEnumerator ReenableControl()
-    {
-        yield return null; // чекаємо 1 кадр
+        // 🔹 Вмикаємо управління
         isLOXActive = false;
         canMove = true;
         LockCursor(true);
