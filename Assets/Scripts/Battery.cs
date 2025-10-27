@@ -6,8 +6,10 @@ public class Battery : MonoBehaviour, IInteractable
 
     public void Interact()
     {
-        Flashlight flashlight = FindObjectOfType<Flashlight>();
-        if (flashlight != null)
+        Player player = FindObjectOfType<Player>();
+        if (player == null) return;
+
+        if (player.currentHeldItem is Flashlight flashlight)
         {
             flashlight.AddBattery(chargeAmount);
             Destroy(gameObject);

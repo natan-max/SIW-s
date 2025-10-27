@@ -13,12 +13,12 @@ TagManager:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Open/Close(door, vent, window)
   - Water
   - UI
-  - 
-  - 
-  - 
+  - take(battery, fuel)
+  - on/off(laptop)
+  - GENERATOR
   - 
   - 
   - 
@@ -45,4 +45,7 @@ TagManager:
   m_SortingLayers:
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: UI
+    uniqueID: 3076777079
     locked: 0

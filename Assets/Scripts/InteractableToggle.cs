@@ -1,7 +1,11 @@
 using UnityEngine;
 
+/// <summary>
+/// Скрипт для об’єктів з Animator (двері, вентиля, вікна).
+/// Реалізує IInteractable, дозволяє відкривати/закривати через CrosshairController.
+/// </summary>
 [RequireComponent(typeof(Collider))]
-public class InteractableToggle : MonoBehaviour
+public class InteractableToggle : MonoBehaviour, IInteractable
 {
     public enum Mode { Bool, Trigger }
     public Mode mode = Mode.Bool;
@@ -13,8 +17,8 @@ public class InteractableToggle : MonoBehaviour
     public string closeTrigger = "Close";      // для Mode.Trigger
 
     [Header("Налаштування")]
-    public bool startOpen = false;
-    public bool interactable = true; // можна вимикати взаємодію через інспектор
+    public bool startOpen = false;             // чи початково відкрито
+    public bool interactable = true;           // можна вимикати взаємодію
 
     private bool isOpen;
 
@@ -25,7 +29,9 @@ public class InteractableToggle : MonoBehaviour
             animator.SetBool(boolParameter, isOpen);
     }
 
-    // Викликається зовні (наприклад, CrosshairController коли натиснуто E)
+    /// <summary>
+    /// Викликається CrosshairController при натисканні E
+    /// </summary>
     public void Interact()
     {
         if (!interactable) return;
@@ -41,7 +47,7 @@ public class InteractableToggle : MonoBehaviour
             isOpen = !isOpen;
             animator.SetBool(boolParameter, isOpen);
         }
-        else // Trigger
+        else // Mode.Trigger
         {
             if (!isOpen)
             {
@@ -54,8 +60,12 @@ public class InteractableToggle : MonoBehaviour
                 isOpen = false;
             }
         }
+
+        Debug.Log($"{name}: Взаємодія виконана, isOpen = {isOpen}");
     }
 
-    // опціонально — щоб інші скрипти могли дізнатись стан
+    /// <summary>
+    /// Повертає стан об’єкта
+    /// </summary>
     public bool IsOpen() => isOpen;
 }

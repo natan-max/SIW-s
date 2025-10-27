@@ -3,73 +3,81 @@ using UnityEngine.UI;
 
 public class CrosshairController : MonoBehaviour
 {
-    [Header("UI")]
-    public Image crosshairImage;
-    public Color defaultColor = Color.white;
-    public Color doorVentWindowColor = Color.yellow; // для Door / Vent / Window
-    public Color laptopColor = Color.green;          // для Laptop
-    public Color itemColor = Color.red;              // для Item
+    [Header("Спрайт прицілу")]
+    public Sprite crosshairSprite;
 
     [Header("Налаштування")]
+    public Color defaultColor = Color.white;
+    public Color interactColor = Color.yellow;
     public float interactRange = 3f;
-    public LayerMask interactableLayer; // для перевірки при натисканні E (залишити 0, щоб дозволити на будь-якому шарі)
+    public KeyCode interactKey = KeyCode.E;
 
-    // внутрішні
-    private RaycastHit lastHit;
-    private bool hasHit = false;
+    [Header("Шари взаємодії")]
+    public LayerMask openCloseLayer;
+    public LayerMask takeLayer;
+    public LayerMask onOffLayer;
+    public LayerMask generatorLayer;
+
+    private Camera mainCam;
+    private Image crosshairImage;
+
+    void Start()
+    {
+        mainCam = Camera.main;
+
+        Canvas canvas = FindObjectOfType<Canvas>();
+        if (canvas == null)
+        {
+            GameObject canvasGO = new GameObject("CrosshairCanvas");
+            canvas = canvasGO.AddComponent<Canvas>();
+            canvas.renderMode = RenderMode.ScreenSpaceOverlay;
+            canvasGO.AddComponent<CanvasScaler>();
+            canvasGO.AddComponent<GraphicRaycaster>();
+        }
+
+        GameObject crosshairGO = new GameObject("Crosshair");
+        crosshairGO.transform.SetParent(canvas.transform, false);
+
+        crosshairImage = crosshairGO.AddComponent<Image>();
+        crosshairImage.sprite = crosshairSprite;
+        crosshairImage.color = defaultColor;
+
+        RectTransform rt = crosshairGO.GetComponent<RectTransform>();
+        rt.anchorMin = rt.anchorMax = new Vector2(0.5f, 0.5f);
+        rt.anchoredPosition = Vector2.zero;
+        rt.sizeDelta = crosshairSprite ? new Vector2(32, 32) : new Vector2(64, 64);
+    }
 
     void Update()
     {
-        UpdateCrosshair();
-        HandleInteractInput();
-    }
+        if (mainCam == null || crosshairImage == null) return;
 
-    void UpdateCrosshair()
-    {
         Vector3 screenCenter = new Vector3(Screen.width / 2f, Screen.height / 2f, 0f);
-        Ray ray = Camera.main.ScreenPointToRay(screenCenter);
+        Ray ray = mainCam.ScreenPointToRay(screenCenter);
+        RaycastHit hit;
 
-        hasHit = Physics.Raycast(ray, out lastHit, interactRange);
+        LayerMask[] layers = { openCloseLayer, takeLayer, onOffLayer, generatorLayer };
+        bool interactableFound = false;
 
-        if (hasHit)
+        foreach (LayerMask layer in layers)
         {
-            string tag = lastHit.collider.tag;
+            if (Physics.Raycast(ray, out hit, interactRange, layer))
+            {
+                IInteractable interactable = hit.collider.GetComponentInParent<IInteractable>();
+                if (interactable != null)
+                {
+                    crosshairImage.color = interactColor;
+                    interactableFound = true;
 
-            if (tag == "Door" || tag == "Vent" || tag == "Window")
-                crosshairImage.color = doorVentWindowColor;
-            else if (tag == "Laptop")
-                crosshairImage.color = laptopColor;
-            else if (tag == "Item")
-                crosshairImage.color = itemColor;
-            else
-                crosshairImage.color = defaultColor;
+                    if (Input.GetKeyDown(interactKey))
+                        interactable.Interact();
+
+                    break;
+                }
+            }
         }
-        else
-        {
+
+        if (!interactableFound)
             crosshairImage.color = defaultColor;
-        }
-    }
-
-    void HandleInteractInput()
-    {
-        if (!hasHit) return;
-        if (!Input.GetKeyDown(KeyCode.E)) return;
-
-        GameObject hitObj = lastHit.collider.gameObject;
-
-        // Якщо LayerMask не задано (значення 0) — дозволяємо взаємодіяти з будь-яким шаром.
-        bool layerOk = (interactableLayer.value == 0) || ((interactableLayer.value & (1 << hitObj.layer)) != 0);
-        if (!layerOk) return;
-
-        // шукаємо компонент InteractableToggle (у самому колайдері або в батьках)
-        InteractableToggle interactable = lastHit.collider.GetComponentInParent<InteractableToggle>();
-        if (interactable != null)
-        {
-            interactable.Interact();
-        }
-        else
-        {
-            Debug.Log($"Об'єкт {hitObj.name} не має InteractableToggle.");
-        }
     }
 }

@@ -12,10 +12,10 @@ public class Player : MonoBehaviour
 
     [Header("Камера")]
     public float mouseSensitivity = 100f;
-    
+
     [Header("Cinemachine")]
-    public CinemachineVirtualCamera playerCamera; // Звичайна Virtual Camera
-    
+    public CinemachineVirtualCamera playerCamera;
+
     [Header("UI LOX")]
     public GameObject LOXCanvas;
     public TMP_Text LOXText;
@@ -23,7 +23,12 @@ public class Player : MonoBehaviour
     public AudioSource loseSound;
     public float textSpeed = 0.1f;
 
-    [HideInInspector] public bool canMove = true;
+    [Header("Слот руки")]
+    public Transform handSlot;
+    [HideInInspector] public MonoBehaviour currentHeldItem;
+
+    [Header("Стан гравця")]
+    public bool canMove = true;
 
     private Rigidbody rb;
     private bool isLOXActive = false;
@@ -35,20 +40,17 @@ public class Player : MonoBehaviour
     void Start()
     {
         rb = GetComponent<Rigidbody>();
-
         startPosition = transform.position;
         startRotation = transform.rotation;
 
-        // Зберігаємо початковий поворот гравця
-        xRotation = transform.eulerAngles.x;
+        // Ініціалізація обертання
+        xRotation = 0f;
         yRotation = transform.eulerAngles.y;
 
         LockCursor(true);
 
-        if (LOXCanvas != null)
-            LOXCanvas.SetActive(false);
-        if (buttonsPanel != null)
-            buttonsPanel.SetActive(false);
+        if (LOXCanvas != null) LOXCanvas.SetActive(false);
+        if (buttonsPanel != null) buttonsPanel.SetActive(false);
     }
 
     void Update()
@@ -57,70 +59,88 @@ public class Player : MonoBehaviour
         {
             LookAround();
             HandleRun();
+            Move();
         }
 
-        // Програш (Q)
-        if (Input.GetKeyDown(KeyCode.Q) && !isLOXActive)
-            ShowLOX();
+        HandleItemDrop();
+        HandleFuelFilling();
+        HandleLOX();
     }
 
-    void FixedUpdate()
+    private void LookAround()
     {
-        if (canMove)
-            Move();
+        // Читання миші
+        float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity * Time.deltaTime;
+        float mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity * Time.deltaTime;
+
+        // Обмеження вертикалі
+        xRotation -= mouseY;
+        xRotation = Mathf.Clamp(xRotation, -90f, 90f);
+
+        // Горизонталь (обертання гравця)
+        yRotation += mouseX;
+
+        // Обертання гравця по Y
+        transform.rotation = Quaternion.Euler(0f, yRotation, 0f);
+
+        // Обертання камери локально по X
+        if (playerCamera != null)
+        {
+            // Тут ми не чіпаємо Brain — просто локальна ротація
+            playerCamera.transform.localRotation = Quaternion.Euler(xRotation, 0f, 0f);
+        }
     }
 
-    void Move()
+    private void Move()
     {
         float x = Input.GetAxis("Horizontal");
         float z = Input.GetAxis("Vertical");
 
         Vector3 move = transform.right * x + transform.forward * z;
         Vector3 velocity = move * currentSpeed;
-        velocity.y = rb.velocity.y;
+        velocity.y = rb.velocity.y; // залишаємо гравітацію
         rb.velocity = velocity;
     }
 
-    void LookAround()
+    private void HandleRun()
     {
-        if (!canMove) return;
+        currentSpeed = Input.GetKey(KeyCode.LeftShift) ? runSpeed : walkSpeed;
+    }
 
-        // Миша
-        float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity * Time.deltaTime;
-        float mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity * Time.deltaTime;
-
-        // Вертикальний рух (голова)
-        xRotation -= mouseY;
-        xRotation = Mathf.Clamp(xRotation, -90f, 90f);
-
-        // Горизонтальний рух (тіло)
-        yRotation += mouseX;
-
-        // Застосовуємо обертання
-        transform.rotation = Quaternion.Euler(0f, yRotation, 0f);
-        
-        // Обертаємо камеру окремо для вертикального руху
-        if (playerCamera != null)
+    private void HandleItemDrop()
+    {
+        if (currentHeldItem != null && Input.GetKeyDown(KeyCode.Mouse4))
         {
-            playerCamera.transform.localRotation = Quaternion.Euler(xRotation, 0f, 0f);
+            if (currentHeldItem is PickUpItem item)
+                item.Drop();
+            else if (currentHeldItem is Flashlight light)
+                light.Drop();
+
+            currentHeldItem = null;
         }
     }
 
-    void HandleRun()
+    private void HandleFuelFilling()
     {
-        if (!canMove)
+        if (currentHeldItem is PickUpItem fuelItem)
         {
-            currentSpeed = 0f;
-            return;
+            if (Input.GetKey(KeyCode.Mouse0))
+                fuelItem.StartFilling();
+            else if (Input.GetKeyUp(KeyCode.Mouse0))
+                fuelItem.StopFilling();
         }
+    }
 
-        currentSpeed = Input.GetKey(KeyCode.LeftShift) ? runSpeed : walkSpeed;
+    private void HandleLOX()
+    {
+        if (Input.GetKeyDown(KeyCode.Q) && !isLOXActive)
+            ShowLOX();
     }
 
     // ==========================
     // 🔹 ПРОГРАШ
     // ==========================
-    void ShowLOX()
+    private void ShowLOX()
     {
         if (LOXCanvas == null || LOXText == null || buttonsPanel == null) return;
 
@@ -130,12 +150,9 @@ public class Player : MonoBehaviour
 
         LOXCanvas.SetActive(true);
         buttonsPanel.SetActive(false);
-
         LockCursor(false);
 
-        if (loseSound != null)
-            loseSound.Play();
-
+        if (loseSound != null) loseSound.Play();
         StartCoroutine(TypeLOXText("ТИ ПРОГРАВ!"));
     }
 
@@ -147,57 +164,37 @@ public class Player : MonoBehaviour
             LOXText.text += c;
             yield return new WaitForSecondsRealtime(textSpeed);
         }
-
         buttonsPanel.SetActive(true);
     }
 
-    // ==========================
-    // 🔹 КНОПКИ
-    // ==========================
-    public void PlayAgain()
-    {
-        ResetGame();
-    }
+    public void PlayAgain() => ResetGame();
 
-    void ResetGame()
+    private void ResetGame()
     {
         StopAllCoroutines();
-
-        // 🔹 Повністю вимикаємо UI
-        if (LOXCanvas != null)
-            LOXCanvas.SetActive(false);
-        if (buttonsPanel != null)
-            buttonsPanel.SetActive(false);
-        
+        if (LOXCanvas != null) LOXCanvas.SetActive(false);
+        if (buttonsPanel != null) buttonsPanel.SetActive(false);
         LOXText.text = "";
 
-        // 🔹 Відновлюємо позицію гравця
         transform.position = startPosition;
         transform.rotation = startRotation;
         rb.velocity = Vector3.zero;
         rb.angularVelocity = Vector3.zero;
 
-        // 🔹 Відновлюємо поворот камери
         xRotation = 0f;
         yRotation = transform.eulerAngles.y;
-        if (playerCamera != null)
-        {
-            playerCamera.transform.localRotation = Quaternion.identity;
-        }
 
-        // 🔹 Вмикаємо управління
+        if (playerCamera != null)
+            playerCamera.transform.localRotation = Quaternion.identity;
+
         isLOXActive = false;
         canMove = true;
         LockCursor(true);
     }
 
-    public void ExitGame()
-    {
-        Application.Quit();
-    }
+    public void ExitGame() => Application.Quit();
 
-    // 🔹 Курсор (вкл/викл)
-    void LockCursor(bool locked)
+    private void LockCursor(bool locked)
     {
         Cursor.lockState = locked ? CursorLockMode.Locked : CursorLockMode.None;
         Cursor.visible = !locked;
