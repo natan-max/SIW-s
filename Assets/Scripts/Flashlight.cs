@@ -25,9 +25,30 @@ public class Flashlight : MonoBehaviour
                 flashlightLight.enabled = false;
                 isOn = false;
             }
+
+            DoFlashlightLogic();
         }
     }
 
+    void DoFlashlightLogic()
+    {
+        Ray ray = new Ray(transform.position, transform.forward);
+        RaycastHit hit;
+
+        Debug.DrawRay(transform.position, transform.forward * 10f, Color.red);
+
+        if (Physics.Raycast(ray, out hit, 10f))
+        {
+            Debug.Log("Ћуч попав у: " + hit.collider.name);
+    
+            Enemy enemy = hit.collider.GetComponent<Enemy>();
+            if (enemy != null)
+            {
+                enemy.OnHitByLight();
+            }
+        }
+    }
+    
     public void ToggleFlashlight()
     {
         if (batteryLife > 0f)
