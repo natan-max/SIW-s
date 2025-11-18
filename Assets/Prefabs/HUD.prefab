@@ -147,6 +147,7 @@ GameObject:
   - component: {fileID: 2471317472903240738}
   - component: {fileID: 3414494748890671580}
   - component: {fileID: 6788962382816233145}
+  - component: {fileID: 2310074935913877950}
   m_Layer: 5
   m_Name: HUD
   m_TagString: Untagged
@@ -254,6 +255,19 @@ MonoBehaviour:
   Camera: {fileID: 0}
   InteractionDistance: 10
   Hint: {fileID: 1496898962080442823}
+--- !u!114 &2310074935913877950
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5502277829933397169}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c6482cbff2e8a4c139f1393b26fde3f6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Canvas: {fileID: 4246555493837814312}
 --- !u!1 &8025204921331043109
 GameObject:
   m_ObjectHideFlags: 0

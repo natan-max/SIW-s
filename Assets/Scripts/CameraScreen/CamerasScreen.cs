@@ -10,8 +10,14 @@ public class CamerasScreen : MonoBehaviour
     public CameraButtonView[] Buttons;
     public CinemachineVirtualCamera[] Cameras;
 
+    private HUD _hud;
+    private Canvas _canvas;
+
     private void Awake()
     {
+        _hud = FindObjectOfType<HUD>();
+        _canvas = GetComponent<Canvas>();
+        
         if (Buttons.Length != Cameras.Length)
         {
             throw new Exception("Arrays size should match");
@@ -57,9 +63,15 @@ public class CamerasScreen : MonoBehaviour
 
     private void UpdateState()
     {
-        gameObject.SetActive(ScreenIsOpen);
-        Cursor.lockState = ScreenIsOpen ? CursorLockMode.None : CursorLockMode.Locked;
-        Cursor.visible = ScreenIsOpen;
+        _canvas.enabled = ScreenIsOpen;
+        if (ScreenIsOpen)
+        {
+            _hud.Disable();
+        }
+        else
+        {
+            _hud.Enable();
+        }
         
         foreach (var view in Buttons)
         {
