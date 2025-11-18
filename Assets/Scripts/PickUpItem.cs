@@ -1,7 +1,7 @@
 using UnityEngine;
 using TMPro;
 
-public class PickUpItem : MonoBehaviour, IInteractable, IHoldable
+public class PickUpItem : MonoBehaviour, IHoldable
 {
     [Header("Тип предмету")]
     public bool isFuel = true;
@@ -46,9 +46,7 @@ public class PickUpItem : MonoBehaviour, IInteractable, IHoldable
         if (player == null) return;
         if (player.currentHeldItem != null) return;
 
-        transform.SetParent(player.handSlot);
-        transform.localPosition = Vector3.zero;
-        transform.localRotation = Quaternion.identity;
+
 
         if (rb != null) rb.isKinematic = true;
         if (col != null) col.enabled = false;

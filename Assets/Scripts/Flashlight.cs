@@ -51,9 +51,7 @@ public class Flashlight : MonoBehaviour, IInteractable
         if (player == null || player.currentHeldItem != null) return;
 
         // Беремо ліхтарик у руку
-        transform.SetParent(player.handSlot);
-        transform.localPosition = Vector3.zero;
-        transform.localRotation = Quaternion.identity;
+
 
         if (rb != null) rb.isKinematic = true;
         if (col != null) col.enabled = false;

@@ -5,6 +5,8 @@ using Cinemachine;
 
 public class Player : MonoBehaviour
 {
+    public InventoryCore InventoryCore;
+    
     [Header("Рух")]
     public float walkSpeed = 5f;
     public float runSpeed = 9f;
@@ -24,7 +26,6 @@ public class Player : MonoBehaviour
     public float textSpeed = 0.1f;
 
     [Header("Слот руки")]
-    public Transform handSlot;
     [HideInInspector] public MonoBehaviour currentHeldItem;
 
     [Header("Стан гравця")]
@@ -60,9 +61,12 @@ public class Player : MonoBehaviour
             LookAround();
             HandleRun();
             Move();
+            
+            InventoryCore.HandleItemDrop();
+            InventoryCore.HandleSlotsSwitch();
+
         }
 
-        HandleItemDrop();
         HandleFuelFilling();
         HandleLOX();
     }
@@ -107,19 +111,6 @@ public class Player : MonoBehaviour
         currentSpeed = Input.GetKey(KeyCode.LeftShift) ? runSpeed : walkSpeed;
     }
 
-    private void HandleItemDrop()
-    {
-        if (currentHeldItem != null && Input.GetKeyDown(KeyCode.Mouse4))
-        {
-            if (currentHeldItem is PickUpItem item)
-                item.Drop();
-            else if (currentHeldItem is Flashlight light)
-                light.Drop();
-
-            currentHeldItem = null;
-        }
-    }
-
     private void HandleFuelFilling()
     {
         if (currentHeldItem is PickUpItem fuelItem)
@@ -133,8 +124,6 @@ public class Player : MonoBehaviour
 
     private void HandleLOX()
     {
-        if (Input.GetKeyDown(KeyCode.Q) && !isLOXActive)
-            ShowLOX();
     }
 
     // ==========================
