@@ -113,13 +113,7 @@ public class Player : MonoBehaviour
 
     private void HandleFuelFilling()
     {
-        if (currentHeldItem is PickUpItem fuelItem)
-        {
-            if (Input.GetKey(KeyCode.Mouse0))
-                fuelItem.StartFilling();
-            else if (Input.GetKeyUp(KeyCode.Mouse0))
-                fuelItem.StopFilling();
-        }
+        
     }
 
     private void HandleLOX()
