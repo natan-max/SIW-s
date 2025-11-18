@@ -1,113 +1,65 @@
 using UnityEngine;
-using TMPro;
 
-public class Flashlight : MonoBehaviour, IInteractable
+public class Flashlight : MonoBehaviour
 {
-    [Header("Налаштування ліхтарика")]
-    public float maxCharge = 100f;
-    public float currentCharge = 100f;
-    public float drainRate = 5f;
     public Light flashlightLight;
-    public Canvas uiCanvas;
-    public TMP_Text chargeText;
-    public LayerMask takeLayer;
+    public float batteryLife = 100f;
+    public float drainRate = 10f;
+    public float maxBatteryLife = 100f;
 
-    private Rigidbody rb;
-    private Collider col;
-    private Player player;
     private bool isOn = false;
-
-    void Start()
-    {
-        rb = GetComponent<Rigidbody>();
-        col = GetComponent<Collider>();
-        UpdateChargeUI();
-        if (uiCanvas != null) uiCanvas.enabled = false;
-    }
 
     void Update()
     {
-        if (player != null && player.currentHeldItem == this)
+        if (Input.GetKeyDown(KeyCode.F))
         {
-            if (Input.GetMouseButtonDown(0))
-                ToggleFlashlight();
+            ToggleFlashlight();
+        }
 
-            if (isOn && currentCharge > 0f)
+        if (isOn)
+        {
+            batteryLife -= drainRate * Time.deltaTime;
+            if (batteryLife <= 0f)
             {
-                currentCharge -= drainRate * Time.deltaTime;
-                currentCharge = Mathf.Max(currentCharge, 0f);
-                if (currentCharge <= 0f) TurnOff();
-                UpdateChargeUI();
+                batteryLife = 0f;
+                flashlightLight.enabled = false;
+                isOn = false;
             }
+
+            DoFlashlightLogic();
         }
     }
 
-    public void Interact()
+    void DoFlashlightLogic()
     {
-        // Перевірка Layer
-        if (((1 << gameObject.layer) & takeLayer) == 0) return;
+        Ray ray = new Ray(transform.position, transform.forward);
+        RaycastHit hit;
 
-        player = FindObjectOfType<Player>();
-        if (player == null || player.currentHeldItem != null) return;
+        Debug.DrawRay(transform.position, transform.forward * 10f, Color.red);
 
-        // Беремо ліхтарик у руку
-
-
-        if (rb != null) rb.isKinematic = true;
-        if (col != null) col.enabled = false;
-
-        player.currentHeldItem = this;
-        if (uiCanvas != null) uiCanvas.enabled = true;
+        if (Physics.Raycast(ray, out hit, 10f))
+        {
+            Debug.Log("��� ����� �: " + hit.collider.name);
+    
+            Enemy enemy = hit.collider.GetComponent<Enemy>();
+            if (enemy != null)
+            {
+                enemy.OnHitByLight();
+            }
+        }
     }
-
-    public void Drop()
+    
+    public void ToggleFlashlight()
     {
-        TurnOff();
-
-        transform.SetParent(null);
-        if (rb != null) rb.isKinematic = false;
-        if (col != null) col.enabled = true;
-
-        rb.AddForce(transform.forward * 2f + Vector3.up * 1f, ForceMode.Impulse);
-
-        if (uiCanvas != null) uiCanvas.enabled = false;
-
-        if (player != null && player.currentHeldItem == this)
-            player.currentHeldItem = null;
+        if (batteryLife > 0f)
+        {
+            isOn = !isOn;
+            flashlightLight.enabled = isOn;
+        }
     }
 
     public void AddBattery(float amount)
     {
-        currentCharge += amount;
-        if (currentCharge > maxCharge)
-            currentCharge = maxCharge;
-
-        UpdateChargeUI();
-    }
-
-    void ToggleFlashlight()
-    {
-        if (currentCharge <= 0f)
-        {
-            TurnOff();
-            return;
-        }
-
-        isOn = !isOn;
-        if (flashlightLight != null)
-            flashlightLight.enabled = isOn;
-    }
-
-    void TurnOff()
-    {
-        isOn = false;
-        if (flashlightLight != null)
-            flashlightLight.enabled = false;
-    }
-
-    void UpdateChargeUI()
-    {
-        if (chargeText != null)
-            chargeText.text = Mathf.RoundToInt(currentCharge) + "%";
+        batteryLife = Mathf.Clamp(batteryLife + amount, 0f, maxBatteryLife);
     }
 }
