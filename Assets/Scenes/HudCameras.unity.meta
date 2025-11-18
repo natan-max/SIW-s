@@ -1,5 +1,9 @@
 fileFormatVersion: 2
+<<<<<<<< HEAD:Assets/Scenes/HudCameras.unity.meta
 guid: 6877e7d2b2e7340f28194d05e989b4d7
+========
+guid: 1b8d251f9af63b746bf2f7ffe00ebb9b
+>>>>>>>> origin/Door:Assets/TextMesh Pro/Documentation/TextMesh Pro User Guide 2016.pdf.meta
 DefaultImporter:
   externalObjects: {}
   userData: 

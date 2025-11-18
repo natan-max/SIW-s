@@ -1,5 +1,10 @@
 fileFormatVersion: 2
+<<<<<<<< HEAD:Assets/nappin/Office Props Softpack/(Sc)OfficeInterior.unity.meta
 guid: 489d9b6ca5379cd45bbac35e0870367d
+========
+guid: f54d1bd14bd3ca042bd867b519fee8cc
+folderAsset: yes
+>>>>>>>> origin/Door:Assets/TextMesh Pro.meta
 DefaultImporter:
   externalObjects: {}
   userData: 

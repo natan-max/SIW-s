@@ -1,5 +1,10 @@
 fileFormatVersion: 2
+<<<<<<<< HEAD:Assets/AK Studio Art/Surveillance Camera/Scenes/Demo.unity.meta
 guid: 8d421f98492b2ca479f591783e8c719f
+========
+guid: 339c536d7449f714aa08bef5cc27effe
+folderAsset: yes
+>>>>>>>> origin/Door:Assets/Flashlight/Misc/Flashlight.fbm.meta
 DefaultImporter:
   externalObjects: {}
   userData: 
