@@ -5,6 +5,8 @@ public class Enemy : MonoBehaviour
 {
     public WaypointList CurrentPoint;
     public WaypointList StartPoint;
+    public EnemyId Id;
+    public GameObject Model;
 
     private float lightTimer = 0f;        
     public float scareTime = 6f;         
@@ -33,7 +35,7 @@ public class Enemy : MonoBehaviour
             {
                 isScared = true;
                 KnockEnemyBack();
-                Debug.Log(name + " злякався після " + scareTime + " секунд світла!");
+                Debug.Log(name + " пїЅпїЅпїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅ " + scareTime + " пїЅпїЅпїЅпїЅпїЅпїЅ пїЅпїЅпїЅпїЅпїЅ!");
             }
         }
         else
@@ -60,6 +62,12 @@ public class Enemy : MonoBehaviour
     public void Move(Vector3 TargetPosition)
     {
         transform.position = TargetPosition;
+    }
+
+    public void SetModel(GameObject model)
+    {
+        Destroy(Model);
+        Model = Instantiate(model, transform);
     }
 
 }

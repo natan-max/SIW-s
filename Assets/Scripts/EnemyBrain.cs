@@ -7,6 +7,7 @@ public class EnemyBrain : MonoBehaviour
     public float Duration = 30f;
     [Range(1, 10)] public float Distance = 1.0f;
     public Enemy[] Enemies;
+    public EnemyModelResolver Resolver;
     private float StartTime;
 
     public bool IsEnemyOnPoint(WaypointList point)
@@ -40,13 +41,17 @@ public class EnemyBrain : MonoBehaviour
     {
         WaypointList[] MoveOptions = GetMoveOptions(enemy.CurrentPoint);
         WaypointList NeighbourPoint = MoveOptions[Random.Range(0, MoveOptions.Length)];
-        if (IsEnemyOnPoint(NeighbourPoint))
+        GameObject model = Resolver.GetModel(NeighbourPoint, enemy.Id);
+        
+        if (model == null || IsEnemyOnPoint(NeighbourPoint))
         {
             return;
         }
+        
         enemy.CurrentPoint = NeighbourPoint;
         Vector3 point = NeighbourPoint.transform.position;
         enemy.Move(point);
+        enemy.SetModel(model);
     }
 
     public WaypointList[] GetMoveOptions(WaypointList CurrentPoint)
