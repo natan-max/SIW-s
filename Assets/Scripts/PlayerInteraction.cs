@@ -3,14 +3,11 @@ using UnityEngine.UI;
 
 public class PlayerInteraction : MonoBehaviour
 {
-    [Header("Налаштування")]
     public float interactRange = 3f;
     public KeyCode interactKey = KeyCode.E;
-
-    [Header("UI")]
-    public Image crosshair; 
-    public Color normalColor = Color.white;
-    public Color highlightColor = Color.green;
+    public Image crosshair;
+    public Color normalColor = default;
+    public Color highlightColor = default;
 
     private Camera cam;
     private IInteractable currentTarget;
@@ -18,14 +15,12 @@ public class PlayerInteraction : MonoBehaviour
     void Start()
     {
         cam = Camera.main;
-        if (crosshair != null)
-            crosshair.color = normalColor;
+        if (crosshair != null) crosshair.color = normalColor;
     }
 
     void Update()
     {
         DetectInteractable();
-
         if (currentTarget != null && Input.GetKeyDown(interactKey))
         {
             currentTarget.Interact();
@@ -35,13 +30,9 @@ public class PlayerInteraction : MonoBehaviour
     void DetectInteractable()
     {
         Ray ray = new Ray(cam.transform.position, cam.transform.forward);
-        RaycastHit hit;
-
-        if (Physics.Raycast(ray, out hit, interactRange))
+        if (Physics.Raycast(ray, out RaycastHit hit, interactRange))
         {
-            // Перевіряємо чи є IInteractable
             IInteractable interactable = hit.collider.GetComponent<IInteractable>();
-
             if (interactable != null)
             {
                 currentTarget = interactable;
@@ -49,7 +40,6 @@ public class PlayerInteraction : MonoBehaviour
                 return;
             }
         }
-
         currentTarget = null;
         if (crosshair != null) crosshair.color = normalColor;
     }

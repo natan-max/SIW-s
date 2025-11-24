@@ -1,26 +1,15 @@
 using System;
-using System.Collections.Generic; 
 using UnityEngine;
-
 
 public class InventoryCore : MonoBehaviour
 {
     public event Action OnChanged;
-
-    public KeyCode[] SlotKeys = {
-        KeyCode.Alpha1,
-        KeyCode.Alpha2,
-        KeyCode.Alpha3,
-        KeyCode.Alpha4,
-    };
-
+    public KeyCode[] SlotKeys = { KeyCode.Alpha1, KeyCode.Alpha2, KeyCode.Alpha3, KeyCode.Alpha4 };
     public KeyCode DropKey = KeyCode.Q;
     public Transform Hand;
-
     public int SelectedSlotIndex { get; private set; }
-    public InventoryItem SelectedItem => _slots[SelectedSlotIndex];
-    public IReadOnlyList<InventoryItem> Slots => _slots;
-
+    public InventoryItem SelectedItem => _slots != null && SelectedSlotIndex >= 0 && SelectedSlotIndex < _slots.Length ? _slots[SelectedSlotIndex] : null;
+    public InventoryItem[] Slots => _slots;
     private InventoryItem[] _slots;
 
     private void Awake()
@@ -30,27 +19,45 @@ public class InventoryCore : MonoBehaviour
 
     private void Update()
     {
-        HandleSlotsSwitch();
-        HandleItemDrop();
+        HandleSlotSwitch();
+        HandleItemUseInput();
+        HandleDropInput();
     }
 
-    public void HandleSlotsSwitch()
+    private void HandleSlotSwitch()
     {
         for (int i = 0; i < SlotKeys.Length; i++)
         {
             if (Input.GetKeyDown(SlotKeys[i]))
-            {
                 SelectSlot(i);
-            }
         }
+    }
+
+    private void HandleItemUseInput()
+    {
+        if (SelectedItem != null)
+        {
+            if (Input.GetMouseButtonDown(0))
+                SelectedItem.StartUse();
+            if (Input.GetMouseButtonUp(0))
+                SelectedItem.StopUse();
+        }
+    }
+
+    private void HandleDropInput()
+    {
+        if (Input.GetKeyDown(DropKey))
+            DropItem();
+    }
+
+    public void HandleSlotsSwitch()
+    {
+        HandleSlotSwitch();
     }
 
     public void HandleItemDrop()
     {
-        if (Input.GetKeyDown(DropKey))
-        {
-            DropItem();
-        }
+        HandleDropInput();
     }
 
     public bool IsActiveSlotOccupied()
@@ -61,66 +68,50 @@ public class InventoryCore : MonoBehaviour
     public void PickupItem(InventoryItem item)
     {
         _slots[SelectedSlotIndex] = item;
-
         item.DisablePhysics();
-        Transform tr = item.transform;
-        tr.SetParent(Hand);
-        tr.localPosition = Vector3.zero;
-        tr.localRotation = Quaternion.identity;
-
-        SelectItem(item);
+        item.transform.SetParent(Hand);
+        item.transform.localPosition = Vector3.zero;
+        item.transform.localRotation = Quaternion.identity;
+        for (int i = 0; i < _slots.Length; i++)
+        {
+            if (_slots[i] != null)
+                _slots[i].gameObject.SetActive(i == SelectedSlotIndex);
+        }
+        item.OnPickup();
+        item.OnSelected();
         OnChanged?.Invoke();
     }
 
     public void SelectSlot(int index)
     {
+        if (index < 0 || index >= _slots.Length) return;
         SelectedSlotIndex = index;
-
-        // вимикаємо всі предмети в руці
         for (int i = 0; i < _slots.Length; i++)
         {
-            if (_slots[i] != null)
+            InventoryItem it = _slots[i];
+            if (it != null)
             {
-                _slots[i].gameObject.SetActive(false);
+                bool isSelected = i == SelectedSlotIndex;
+                it.gameObject.SetActive(isSelected);
+                if (isSelected) it.OnSelected(); else it.OnDeselected();
             }
         }
-
-        // вмикаємо тільки вибраний
-        SelectItem(SelectedItem);
         OnChanged?.Invoke();
     }
 
     public void DropItem()
     {
-        if (!IsActiveSlotOccupied())
-            return;
-
+        if (!IsActiveSlotOccupied()) return;
         InventoryItem item = SelectedItem;
         _slots[SelectedSlotIndex] = null;
-
-        DropItem(item);
+        if (item != null)
+        {
+            item.transform.SetParent(null);
+            item.EnablePhysics();
+            item.gameObject.SetActive(true);
+            if (item.Rb != null) item.Rb.AddForce(item.transform.forward * 2f + Vector3.up * 1f, ForceMode.Impulse);
+            item.OnDrop();
+        }
         OnChanged?.Invoke();
-    }
-
-    private void SelectItem(InventoryItem item)
-    {
-        if (item == null)
-            return;
-
-        item.gameObject.SetActive(true);
-        item.OnSelected();
-    }
-
-    private void DropItem(InventoryItem item)
-    {
-        if (item == null)
-            return;
-
-        item.transform.SetParent(null);
-
-        item.EnablePhysics();
-        item.Rb.AddForce(item.transform.forward * 5f, ForceMode.Impulse);
-
-        item.OnDrop();
     }
 }

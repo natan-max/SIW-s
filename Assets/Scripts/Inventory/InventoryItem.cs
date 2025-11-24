@@ -1,22 +1,34 @@
-using System;
 using UnityEngine;
 
-public abstract class InventoryItem : MonoBehaviour, IInteractable
+public class InventoryItem : MonoBehaviour, IInteractable
 {
     public Sprite Icon;
     public Rigidbody Rb;
     public Collider Collider;
+    public bool canBeUsedWithLMB = false;
+    public AudioSource audioSource;
+    protected Transform playerCam;
 
-    public virtual void OnSelected() {}
-    public virtual void OnDeselected() {}
-    public virtual void OnPickup() {}
-    public virtual void OnDrop() {}
-    
+    protected virtual void Start()
+    {
+        Rb = Rb == null ? GetComponent<Rigidbody>() : Rb;
+        Collider = Collider == null ? GetComponent<Collider>() : Collider;
+        if (Camera.main != null) playerCam = Camera.main.transform;
+    }
+
+    public virtual void OnPickup() { }
+
+    public virtual void OnSelected() { }
+
+    public virtual void OnDeselected() { }
+
+    public virtual void OnDrop() { }
+
     public void Interact()
     {
         InventoryCore inventory = FindObjectOfType<InventoryCore>();
-
-        if (inventory.IsActiveSlotOccupied() == false)
+        if (inventory == null) return;
+        if (!inventory.IsActiveSlotOccupied())
         {
             inventory.PickupItem(this);
         }
@@ -24,30 +36,27 @@ public abstract class InventoryItem : MonoBehaviour, IInteractable
 
     public void EnablePhysics()
     {
-        Rb.isKinematic = false;
-        Collider.enabled = true;
+        if (Rb != null) Rb.isKinematic = false;
+        if (Collider != null) Collider.enabled = true;
     }
 
     public void DisablePhysics()
     {
-        Rb.isKinematic = true;
-        Collider.enabled = false;
+        if (Rb != null) Rb.isKinematic = true;
+        if (Collider != null) Collider.enabled = false;
     }
-    
-#if UNITY_EDITOR
-    private void OnValidate()
-    {
-        if (Rb == null)
-        {
-            Rb = GetComponent<Rigidbody>();
-            UnityEditor.EditorUtility.SetDirty(this);
-        }
 
-        if (Collider == null)
+    protected virtual void Update()
+    {
+        if (transform.parent != null && playerCam != null)
         {
-            Collider = GetComponent<Collider>();
-            UnityEditor.EditorUtility.SetDirty(this);
+            transform.rotation = Quaternion.Lerp(transform.rotation, playerCam.rotation, Time.deltaTime * 10f);
         }
     }
-#endif
+
+    public virtual void StartUse() { }
+
+    public virtual void StopUse() { }
+
+    public virtual void UseOnce() { }
 }

@@ -6,7 +6,6 @@ public class InventorySlotView : MonoBehaviour
 {
     public Color ActiveColor;
     public Color NormalColor;
-    
     public Image SlotBackground;
     public Image ItemIcon;
     public TextMeshProUGUI SlotId;
@@ -16,27 +15,17 @@ public class InventorySlotView : MonoBehaviour
         SlotId.text = slotId;
     }
 
-    public Sprite GetItemIcon(InventoryItem item)
-    {
-        if (item == null)
-            return null;
-
-        return item.Icon;
-    }
-
     public void Display(InventoryItem item, bool isSelected)
     {
-        Sprite itemIcon = GetItemIcon(item);
-        ItemIcon.sprite = itemIcon;
-        ItemIcon.enabled = itemIcon != null;
-        
-        if (isSelected)
+        if (item != null)
         {
-            SlotBackground.color = ActiveColor;
+            ItemIcon.sprite = item.Icon;
+            ItemIcon.enabled = item.Icon != null;
         }
         else
         {
-            SlotBackground.color = NormalColor;
+            ItemIcon.enabled = false;
         }
+        SlotBackground.color = isSelected ? ActiveColor : NormalColor;
     }
 }
