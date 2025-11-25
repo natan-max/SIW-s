@@ -20,6 +20,11 @@ public class EnemyBrain : MonoBehaviour
         return false;
     }
 
+    public void Start()
+    {
+        
+    }
+
     public void Update()
     {
         if (Time.time - StartTime > Duration)

@@ -35,7 +35,7 @@ public class Enemy : MonoBehaviour
             {
                 isScared = true;
                 KnockEnemyBack();
-                Debug.Log(name + " �������� ���� " + scareTime + " ������ �����!");
+                Debug.Log(name + "Спугнули ворога!");
             }
         }
         else
