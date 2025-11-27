@@ -19,7 +19,7 @@ MonoBehaviour:
     width: 1536
     height: 780.8
   m_ShowMode: 4
-  m_Title: Project
+  m_Title: Hierarchy
   m_RootView: {fileID: 2}
   m_MinSize: {x: 875, y: 321}
   m_MaxSize: {x: 10000, y: 10000}
@@ -347,10 +347,10 @@ MonoBehaviour:
     m_VAllowExceedBaseRangeMin: 1
     m_VAllowExceedBaseRangeMax: 1
     m_ScaleWithWindow: 0
-    m_HSlider: 1
-    m_VSlider: 1
+    m_HSlider: 0
+    m_VSlider: 0
     m_IgnoreScrollWheelUntilClicked: 0
-    m_EnableMouseInput: 1
+    m_EnableMouseInput: 0
     m_EnableSliderZoomHorizontal: 0
     m_EnableSliderZoomVertical: 0
     m_UniformScale: 1
@@ -421,7 +421,7 @@ MonoBehaviour:
       scrollPos: {x: 0, y: 0}
       m_SelectedIDs: 
       m_LastClickedID: 0
-      m_ExpandedIDs: aed9ffff44e5ffffc8f5ffffd2f8ffff347200004c7200005872000062720000747400005c75000068760000
+      m_ExpandedIDs: 10fbffff
       m_RenameOverlay:
         m_UserAcceptedRename: 0
         m_Name: 
@@ -561,8 +561,8 @@ MonoBehaviour:
       floating: 0
       collapsed: 0
       displayed: 1
-      snapOffset: {x: -111, y: 26}
-      snapOffsetDelta: {x: -1, y: 0}
+      snapOffset: {x: -112, y: 26}
+      snapOffsetDelta: {x: 0, y: 0}
       snapCorner: 1
       id: Orientation
       index: 0
@@ -788,9 +788,9 @@ MonoBehaviour:
   m_PlayAudio: 0
   m_AudioPlay: 0
   m_Position:
-    m_Target: {x: 51.28766, y: 34.972927, z: 18.65869}
+    m_Target: {x: -7.1559553, y: 21.722412, z: 21.97654}
     speed: 2
-    m_Value: {x: 51.28766, y: 34.972927, z: 18.65869}
+    m_Value: {x: -7.1559553, y: 21.722412, z: 21.97654}
   m_RenderMode: 0
   m_CameraMode:
     drawMode: 0
@@ -836,13 +836,13 @@ MonoBehaviour:
     m_GridAxis: 1
     m_gridOpacity: 0
   m_Rotation:
-    m_Target: {x: 0.09097317, y: -0.57610905, z: 0.046992607, w: 0.8137098}
+    m_Target: {x: 0.053971075, y: -0.6936993, z: 0.029661572, w: 0.72100383}
     speed: 2
-    m_Value: {x: 0.090824924, y: -0.5738397, z: 0.04677805, w: 0.8125704}
+    m_Value: {x: -0.053971075, y: 0.6936993, z: -0.02966157, w: -0.7210038}
   m_Size:
-    m_Target: 4.025688
+    m_Target: 1.1612645
     speed: 2
-    m_Value: 4.025688
+    m_Value: 1.1612645
   m_Ortho:
     m_Target: 0
     speed: 2
@@ -1027,7 +1027,7 @@ MonoBehaviour:
     m_SkipHidden: 0
     m_SearchArea: 1
     m_Folders:
-    - Assets/Same Gev Dudios/Sci-Fi Robots Bundle/Prefabs
+    - Assets/Free Wood Door Pack/Prefab/Wood/Door_1
     m_Globs: []
     m_OriginalText: 
     m_ImportLogFlags: 0
@@ -1035,16 +1035,16 @@ MonoBehaviour:
   m_ViewMode: 1
   m_StartGridSize: 96
   m_LastFolders:
-  - Assets/Same Gev Dudios/Sci-Fi Robots Bundle/Prefabs
+  - Assets/Free Wood Door Pack/Prefab/Wood/Door_1
   m_LastFoldersGridSize: 96
   m_LastProjectPath: D:\GoIteens\GoIteens\SIW-s
   m_LockTracker:
     m_IsLocked: 0
   m_FolderTreeState:
-    scrollPos: {x: 0, y: 627}
-    m_SelectedIDs: 6a800000
-    m_LastClickedID: 32874
-    m_ExpandedIDs: 000000007e7f0000807f0000827f0000847f0000867f0000887f00008a7f00008c7f00008e7f0000907f0000927f0000947f0000967f0000987f00009a7f00009c7f00009e7f0000a07f0000
+    scrollPos: {x: 0, y: 303}
+    m_SelectedIDs: 148b0000
+    m_LastClickedID: 35604
+    m_ExpandedIDs: 000000002c8a00002e8a0000308a0000328a0000348a0000368a0000388a00003a8a00003c8a00003e8a0000408a0000428a0000448a0000468a0000488a00004a8a00004c8a00004e8a0000ba8a0000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -1072,7 +1072,7 @@ MonoBehaviour:
     scrollPos: {x: 0, y: 0}
     m_SelectedIDs: 
     m_LastClickedID: 0
-    m_ExpandedIDs: 000000007e7f0000807f0000827f0000847f0000867f0000887f00008a7f00008c7f00008e7f0000907f0000927f0000947f0000967f0000987f00009a7f00009c7f00009e7f0000a07f0000
+    m_ExpandedIDs: 000000002c8a00002e8a0000308a0000328a0000348a0000368a0000388a00003a8a00003c8a00003e8a0000408a0000428a0000448a0000468a0000488a00004a8a00004c8a00004e8a0000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
@@ -1099,8 +1099,8 @@ MonoBehaviour:
   m_ListAreaState:
     m_SelectedInstanceIDs: 
     m_LastClickedInstanceID: 0
-    m_HadKeyboardFocusLastEvent: 1
-    m_ExpandedInstanceIDs: c62300004c70000000000000c48a0000088d0000b08a00008c7900007a7500003e7700005a83000056880000
+    m_HadKeyboardFocusLastEvent: 0
+    m_ExpandedInstanceIDs: c62300004c700000c48a0000088d0000b08a00008c7900007a7500003e7700005a8300005688000000000000108c0000
     m_RenameOverlay:
       m_UserAcceptedRename: 0
       m_Name: 
