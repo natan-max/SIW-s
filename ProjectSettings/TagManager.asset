@@ -9,6 +9,7 @@ TagManager:
   - Vent
   - Window
   - Item
+  - LoseZone
   layers:
   - Default
   - TransparentFX

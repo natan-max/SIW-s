@@ -48,10 +48,7 @@ public class InventoryItem : MonoBehaviour, IInteractable
 
     protected virtual void Update()
     {
-        if (transform.parent != null && playerCam != null)
-        {
-            transform.rotation = Quaternion.Lerp(transform.rotation, playerCam.rotation, Time.deltaTime * 10f);
-        }
+       
     }
 
     public virtual void StartUse() { }

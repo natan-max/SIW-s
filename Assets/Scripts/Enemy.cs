@@ -7,9 +7,15 @@ public class Enemy : MonoBehaviour
     public WaypointList StartPoint;
     public EnemyId Id;
     public GameObject Model;
+    public GameObject gameOverScreen; 
+    public Player player;
 
-    private float lightTimer = 0f;        
-    public float scareTime = 6f;         
+    public Transform loseTriggerPoint; 
+    private float loseTimer = 0f;
+    public float maxLoseTime = 4f;
+    private float lightTimer = 0f;
+    public float scareTime = 6f;
+    private bool isInThreshold = false; 
     private bool isBeingLit = false;      
     private bool isScared = false;        
 
@@ -25,7 +31,7 @@ public class Enemy : MonoBehaviour
 
     void Update()
     {
-        if (isScared) return; 
+        if (isScared) return;
 
         if (isBeingLit)
         {
@@ -40,11 +46,42 @@ public class Enemy : MonoBehaviour
         }
         else
         {
-            
+
             lightTimer = 0f;
         }
 
+        if (isInThreshold && !isBeingLit && player != null)
+        {
+            loseTimer += Time.deltaTime;
+            if (loseTimer >= maxLoseTime)
+            {
+                player.ShowLOX(); 
+                loseTimer = 0f;
+            }
+        }
+        else
+        {
+            loseTimer = 0f;
+        }
+
+
+
         isBeingLit = false;
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("LoseZone")) 
+            isInThreshold = true;
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.CompareTag("LoseZone"))
+        {
+            isInThreshold = false;
+            loseTimer = 0f; 
+        }
     }
 
     public void KnockEnemyBack()

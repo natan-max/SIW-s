@@ -123,7 +123,7 @@ public class Player : MonoBehaviour
     // ==========================
     // 🔹 ПРОГРАШ
     // ==========================
-    private void ShowLOX()
+    public void ShowLOX()
     {
         if (LOXCanvas == null || LOXText == null || buttonsPanel == null) return;
 
